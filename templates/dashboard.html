@@ -1,0 +1,296 @@
+{% extends "base.html" %}
+
+{% block title %}Results Dashboard - Safety System{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <h2 class="mb-3">Analysis Results Dashboard</h2>
+    <hr>
+</div>
+
+<!-- AHP Results Section -->
+{% if show_risk_chart %}
+<div class="row mb-5">
+    <div class="col-lg-6 mb-4">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-header bg-primary text-white py-3">
+                <h5 class="mb-0">Risk Priority Analysis (AHP)</h5>
+            </div>
+            <div class="card-body p-4">
+                <div class="chart-container position-relative" style="height: 400px;">
+                    <canvas id="riskChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6 mb-4">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-header bg-primary text-white py-3">
+                <h5 class="mb-0">Hazard Weights & Consistency</h5>
+            </div>
+            <div class="card-body p-4">
+                <div style="max-height: 400px; overflow-y: auto;">
+                    <table class="table table-hover table-sm mb-0">
+                        <thead class="table-light sticky-top">
+                            <tr>
+                                <th>Hazard Category</th>
+                                <th class="text-end">Weight</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for criterion, weight in criteria|zip(weights) %}
+                            <tr>
+                                <td>
+                                    <strong style="font-size: 0.9rem;">{{ criterion }}</strong>
+                                </td>
+                                <td class="text-end">
+                                    <span class="badge bg-primary">{{ "%.2f%%"|format(weight * 100) }}</span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <hr class="my-4">
+
+                <div class="row g-3">
+                    <div class="col-6">
+                        <div class="metric-box">
+                            <small class="text-muted d-block">Lambda Max (λmax)</small>
+                            <h5 class="mb-0">{{ lambda_max }}</h5>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="metric-box">
+                            <small class="text-muted d-block">Consistency Index</small>
+                            <h5 class="mb-0">{{ CI }}</h5>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-3 mt-2">
+                    <div class="col-6">
+                        <div class="metric-box">
+                            <small class="text-muted d-block">Consistency Ratio</small>
+                            <h5 class="mb-0">
+                                {{ CR }}
+                                {% if CR < 0.1 %}
+                                <span class="badge bg-success ms-2">✓ Valid</span>
+                                {% else %}
+                                <span class="badge bg-danger ms-2">✗ Review</span>
+                                {% endif %}
+                            </h5>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="alert {% if CR < 0.1 %}alert-success{% else %}alert-warning{% endif %} mt-4 mb-0">
+                    <strong>
+                        {% if CR < 0.1 %}
+                        <i class="bi bi-check-circle"></i> Analysis is Consistent
+                        {% else %}
+                        <i class="bi bi-exclamation-triangle"></i> Consistency Review Needed
+                        {% endif %}
+                    </strong>
+                    <small class="d-block mt-1">
+                        {% if CR < 0.1 %}
+                        The AHP analysis is reliable and can be used for decisions (CR &lt; 0.1).
+                        {% else %}
+                        Consider reviewing the pairwise comparisons. CR should be &lt; 0.1 for reliability.
+                        {% endif %}
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Budget Allocation Section -->
+{% if show_budget_chart %}
+<div class="row mb-5">
+    <div class="col-lg-6 mb-4">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-header bg-success text-white py-3">
+                <h5 class="mb-0">Budget Allocation by Hazard Category</h5>
+            </div>
+            <div class="card-body p-4">
+                <div class="chart-container position-relative" style="height: 450px;">
+                    <canvas id="budgetChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6 mb-4">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-header bg-success text-white py-3">
+                <h5 class="mb-0">Allocation Details</h5>
+            </div>
+            <div class="card-body p-4">
+                <div style="max-height: 450px; overflow-y: auto;">
+                    <table class="table table-hover table-sm mb-0">
+                        <thead class="table-light sticky-top">
+                            <tr>
+                                <th>Hazard Category</th>
+                                <th class="text-end">Allocated Budget</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for criterion, amount in criteria|zip(allocation) %}
+                            <tr>
+                                <td>
+                                    <strong style="font-size: 0.9rem;">{{ criterion }}</strong>
+                                </td>
+                                <td class="text-end">
+                                    <span class="badge bg-success">${{ "{:,.2f}".format(amount) }}</span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <hr class="my-4">
+
+                <div class="metric-box">
+                    <small class="text-muted d-block">Total Budget</small>
+                    <h4 class="mb-0">${{ "{:,.2f}".format(total_budget) }}</h4>
+                </div>
+
+                <div class="alert alert-info mt-4 mb-0">
+                    <strong><i class="bi bi-info-circle"></i> How to Use:</strong>
+                    <small class="d-block mt-2">
+                        These allocations are based on the hazard risk priorities from your AHP analysis. 
+                        Use these amounts to distribute safety budget across the 9 hazard categories.
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Action Buttons -->
+<div class="row mt-5 mb-4">
+    <div class="col-12">
+        <div class="d-flex gap-2 flex-wrap">
+            <a href="/" class="btn btn-outline-secondary">
+                <i class="bi bi-house"></i> Home
+            </a>
+            <a href="/ahp" class="btn btn-outline-primary">
+                <i class="bi bi-arrow-repeat"></i> New AHP Analysis
+            </a>
+            <a href="/cos" class="btn btn-outline-success">
+                <i class="bi bi-arrow-repeat"></i> Budget Allocation
+            </a>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    // Color palette for 9 categories
+    const colors9 = [
+        '#0066cc', // A - Physical
+        '#00a8e8', // B - Electrical
+        '#00c9ff', // C - Machinery
+        '#20c997', // D - Chemical
+        '#28a745', // E - Environmental
+        '#ffc107', // F - Fire & Explosion
+        '#fd7e14', // G - Ergonomic
+        '#dc3545', // H - Biological
+        '#6f42c1'  // I - Organizational
+    ];
+
+    // AHP Risk Chart
+    {% if show_risk_chart %}
+    const riskCtx = document.getElementById('riskChart');
+    if (riskCtx) {
+        new Chart(riskCtx, {
+            type: 'doughnut',
+            data: {
+                labels: {{ criteria|tojson }},
+                datasets: [{
+                    data: {{ weights|tojson }},
+                    backgroundColor: colors9,
+                    borderColor: '#fff',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 15,
+                            font: {
+                                size: 11
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return (context.parsed * 100).toFixed(2) + '%';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+    {% endif %}
+
+    // Budget Allocation Chart
+    {% if show_budget_chart %}
+    const budgetCtx = document.getElementById('budgetChart');
+    if (budgetCtx) {
+        new Chart(budgetCtx, {
+            type: 'bar',
+            data: {
+                labels: {{ criteria|tojson }},
+                datasets: [{
+                    label: 'Allocated Budget ($)',
+                    data: {{ allocation|tojson }},
+                    backgroundColor: colors9,
+                    borderColor: '#fff',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return '$' + context.parsed.x.toLocaleString('en-US', {maximumFractionDigits: 2});
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        ticks: {
+                            callback: function(value) {
+                                return '$' + value.toLocaleString('en-US');
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+    {% endif %}
+</script>
+{% endblock %}

@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block title %}Home - AHP–COS Safety System{% endblock %}
+
+{% block content %}
+<div class="row mb-5">
+    <div class="col-lg-8 mx-auto">
+        <div class="card shadow-lg border-0 mb-4">
+            <div class="card-body text-center p-5">
+                <h1 class="card-title mb-3">
+                    <i class="icon-welcome" style="font-size: 3rem; color: #0066cc;"></i>
+                </h1>
+                <h2 class="card-title mb-3">Welcome to the Safety Decision Support System</h2>
+                <p class="card-text text-muted fs-5">
+                    A comprehensive tool for construction site risk assessment and budget allocation using 
+                    the Analytic Hierarchy Process (AHP) and Cost of Safety (COS) framework.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- AHP Analysis Card -->
+    <div class="col-lg-6">
+        <div class="card shadow-sm border-0 h-100 feature-card">
+            <div class="card-body p-4">
+                <div class="mb-3">
+                    <i class="icon-analysis" style="font-size: 2rem; color: #0066cc;"></i>
+                </div>
+                <h3 class="card-title">AHP Risk Assessment</h3>
+                <p class="card-text text-muted">
+                    Perform pairwise comparison of construction risks using the Saaty scale (1–9) to 
+                    determine risk priorities and validate consistency.
+                </p>
+                <div class="d-flex gap-2 align-items-center mt-4">
+                    <span class="badge bg-primary">Risk Analysis</span>
+                    <span class="badge bg-info">Consistency Check</span>
+                </div>
+                <a href="/ahp" class="btn btn-primary mt-4 w-100">
+                    Start AHP Analysis <i class="ms-2">→</i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- COS Budgeting Card -->
+    <div class="col-lg-6">
+        <div class="card shadow-sm border-0 h-100 feature-card">
+            <div class="card-body p-4">
+                <div class="mb-3">
+                    <i class="icon-budget" style="font-size: 2rem; color: #28a745;"></i>
+                </div>
+                <h3 class="card-title">COS Budget Allocation</h3>
+                <p class="card-text text-muted">
+                    Allocate safety budget across risk categories based on their priority weights 
+                    to optimize resource distribution.
+                </p>
+                <div class="d-flex gap-2 align-items-center mt-4">
+                    <span class="badge bg-success">Budget Planning</span>
+                    <span class="badge bg-success">Optimization</span>
+                </div>
+                <a href="/cos" class="btn btn-success mt-4 w-100">
+                    Allocate Budget <i class="ms-2">→</i>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<div class="row mt-5">
+    <div class="col-12">
+        <h3 class="mb-4">Key Features</h3>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="d-flex gap-3">
+            <div class="feature-icon">✓</div>
+            <div>
+                <h5 class="mb-2">Structured Decision Making</h5>
+                <p class="text-muted small">AHP methodology for systematic risk evaluation</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="d-flex gap-3">
+            <div class="feature-icon">✓</div>
+            <div>
+                <h5 class="mb-2">Consistency Validation</h5>
+                <p class="text-muted small">Built-in CR check to ensure reliable decisions</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="d-flex gap-3">
+            <div class="feature-icon">✓</div>
+            <div>
+                <h5 class="mb-2">Data Visualization</h5>
+                <p class="text-muted small">Interactive charts for intuitive analysis</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="d-flex gap-3">
+            <div class="feature-icon">✓</div>
+            <div>
+                <h5 class="mb-2">Budget Optimization</h5>
+                <p class="text-muted small">Cost-effective resource allocation strategies</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="d-flex gap-3">
+            <div class="feature-icon">✓</div>
+            <div>
+                <h5 class="mb-2">Professional Dashboard</h5>
+                <p class="text-muted small">Real-time analytics and reporting</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="d-flex gap-3">
+            <div class="feature-icon">✓</div>
+            <div>
+                <h5 class="mb-2">Mobile Responsive</h5>
+                <p class="text-muted small">Access from any device, anywhere</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

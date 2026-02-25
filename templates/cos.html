@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+
+{% block title %}COS Budget Allocation - Safety System{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <div class="card shadow border-0 mb-4">
+            <div class="card-header bg-success text-white py-3">
+                <h3 class="mb-0">Cost of Safety (COS) - Budget Allocation</h3>
+            </div>
+            <div class="card-body p-4">
+                <div class="alert alert-info" role="alert">
+                    <strong><i class="bi bi-info-circle"></i> Purpose:</strong>
+                    Allocate your safety budget across the 9 hazard categories based on AHP risk assessment 
+                    to optimize resource distribution for maximum safety impact.
+                </div>
+
+                <form method="POST" class="needs-validation">
+                    <div class="row g-3">
+                        <!-- Budget Input -->
+                        <div class="col-12">
+                            <label for="budget" class="form-label">
+                                <strong>Total Safety Budget</strong>
+                                <button type="button" class="btn btn-sm btn-outline-info" data-bs-toggle="tooltip" 
+                                    title="Enter the total amount of budget available for all 9 hazard categories">
+                                    <i class="bi bi-question-circle"></i>
+                                </button>
+                            </label>
+                            <div class="input-group input-group-lg">
+                                <span class="input-group-text">$</span>
+                                <input 
+                                    type="number" 
+                                    step="0.01" 
+                                    min="0" 
+                                    name="budget" 
+                                    id="budget"
+                                    class="form-control"
+                                    placeholder="Enter budget amount"
+                                    required>
+                            </div>
+                            <div class="form-text mt-2">
+                                Example: 100000 for $100,000 total budget for all 9 hazard categories
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="col-12 mt-4">
+                            <button type="submit" class="btn btn-success btn-lg w-100">
+                                <i class="bi bi-cash-coin"></i> Calculate Allocations
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+                <!-- Info Section -->
+                <div class="row mt-5">
+                    <div class="col-md-6">
+                        <div class="card bg-light border-0">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <i class="bi bi-graph-up" style="color: #28a745;"></i> How It Works
+                                </h5>
+                                <ol class="mb-0 small">
+                                    <li>Enter your total safety budget</li>
+                                    <li>System applies AHP hazard weights</li>
+                                    <li>Budget distributed across 9 categories</li>
+                                    <li>Review allocation breakdown results</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card bg-light border-0">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <i class="bi bi-lightbulb" style="color: #ffc107;"></i> Best Practices
+                                </h5>
+                                <ul class="mb-0 small">
+                                    <li>Allocate more to higher-risk hazards</li>
+                                    <li>Follow AHP recommendation ratios</li>
+                                    <li>Review & adjust quarterly</li>
+                                    <li>Track spending vs. allocation</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hazard Categories Reference -->
+                <div class="alert alert-secondary mt-5 p-3" role="alert">
+                    <strong>🏗️ The 9 Hazard Categories:</strong>
+                    <div class="row mt-3 small">
+                        <div class="col-md-6">
+                            <p class="mb-2"><strong>A - Physical Hazards</strong></p>
+                            <p class="mb-2"><strong>B - Electrical Hazards</strong></p>
+                            <p class="mb-2"><strong>C - Machinery Hazards</strong></p>
+                            <p class="mb-2"><strong>D - Chemical Hazards</strong></p>
+                            <p class="mb-0"><strong>E - Environmental Hazards</strong></p>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="mb-2"><strong>F - Fire & Explosion</strong></p>
+                            <p class="mb-2"><strong>G - Ergonomic Hazards</strong></p>
+                            <p class="mb-2"><strong>H - Biological Hazards</strong></p>
+                            <p class="mb-0"><strong>I - Organizational Hazards</strong></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Enable Bootstrap tooltips
+var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+    return new bootstrap.Tooltip(tooltipTriggerEl);
+});
+</script>
+{% endblock %}

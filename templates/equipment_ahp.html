@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Equipment AHP - Site Safety Equipment Prioritization{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h3>Site Safety Equipment Prioritization (AHP)</h3>
+    <p>Enter pairwise comparison values using Saaty scale (1-9).</p>
+
+    <form method="post" class="row g-3 mt-3">
+        <div class="col-12">
+            <small class="text-muted">You may enter decimals (e.g. 0.5) for reciprocal comparisons. Allowed range: 0.1 - 9.</small>
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">Personal Protective Equipment (A) vs Site Safety & Protection Systems (B)</label>
+            <input type="number" name="A_B" min="0.1" max="9" step="0.01" class="form-control" value="1">
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label">Personal Protective Equipment (A) vs Machinery & Electrical Safety (C)</label>
+            <input type="number" name="A_C" min="0.1" max="9" step="0.01" class="form-control" value="1">
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label">Personal Protective Equipment (A) vs Helmets (D)</label>
+            <input type="number" name="A_D" min="0.1" max="9" step="0.01" class="form-control" value="1">
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label">Site Safety & Protection Systems (B) vs Machinery & Electrical Safety (C)</label>
+            <input type="number" name="B_C" min="0.1" max="9" step="0.01" class="form-control" value="1">
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label">Site Safety & Protection Systems (B) vs Helmets (D)</label>
+            <input type="number" name="B_D" min="0.1" max="9" step="0.01" class="form-control" value="1">
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label">Machinery & Electrical Safety (C) vs Helmets (D)</label>
+            <input type="number" name="C_D" min="0.1" max="9" step="0.01" class="form-control" value="1">
+        </div>
+
+        <div class="col-12 mt-3">
+            <button class="btn btn-primary">Compute AHP</button>
+            <a href="/" class="btn btn-secondary ms-2">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

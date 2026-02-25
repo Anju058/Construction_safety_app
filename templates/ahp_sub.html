@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block title %}AHP Results - Safety System{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-primary text-white py-3">
+                <h3 class="mb-0">AHP Analysis Results</h3>
+            </div>
+            <div class="card-body p-4">
+                <!-- Risk Weights Table -->
+                <h5 class="mb-3">Risk Weights Summary</h5>
+                <table class="table table-hover mb-4">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Risk Category</th>
+                            <th class="text-end">Weight</th>
+                            <th class="text-end">Percentage</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item, weight in results %}
+                        <tr>
+                            <td><strong>{{ item }}</strong></td>
+                            <td class="text-end"><code>{{ weight }}</code></td>
+                            <td class="text-end">
+                                <span class="badge bg-primary">{{ "%.1f%%"|format(weight * 100) }}</span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+                <hr>
+
+                <!-- Consistency Metrics -->
+                <h5 class="mb-3 mt-4">Consistency Validation</h5>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="card bg-light border-0">
+                            <div class="card-body">
+                                <small class="text-muted d-block">Consistency Index (CI)</small>
+                                <h4 class="mb-0 text-primary">{{ CI }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card bg-light border-0">
+                            <div class="card-body">
+                                <small class="text-muted d-block">Consistency Ratio (CR)</small>
+                                <h4 class="mb-0 text-primary">{{ CR }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Result Interpretation -->
+                <div class="alert {% if CR < 0.1 %}alert-success{% else %}alert-danger{% endif %} mt-4">
+                    <strong>
+                        {% if CR < 0.1 %}
+                        <i class="bi bi-check-circle"></i> Judgment is Consistent ✓
+                        {% else %}
+                        <i class="bi bi-exclamation-circle"></i> Judgment is NOT Consistent ✗
+                        {% endif %}
+                    </strong>
+                    <p class="mb-0 mt-2">
+                        {% if CR < 0.1 %}
+                        Your pairwise comparison judgments are consistent (CR &lt; 0.10). 
+                        These results are reliable for decision-making.
+                        {% else %}
+                        Your pairwise comparison judgments show inconsistency (CR ≥ 0.10). 
+                        Please review your comparisons and retry.
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="d-flex gap-2 flex-wrap">
+            <a href="/" class="btn btn-outline-secondary">
+                <i class="bi bi-house"></i> Home
+            </a>
+            <a href="/ahp" class="btn btn-primary">
+                <i class="bi bi-arrow-repeat"></i> New Analysis
+            </a>
+            <a href="/cos" class="btn btn-success">
+                <i class="bi bi-arrow-right"></i> Proceed to Budget Allocation
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

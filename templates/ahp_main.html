@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block title %}AHP Analysis - Safety System{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-10 mx-auto">
+        <div class="card shadow border-0 mb-4">
+            <div class="card-header bg-primary text-white py-3">
+                <h3 class="mb-0">AHP Risk Assessment - Pairwise Comparisons</h3>
+            </div>
+            <div class="card-body p-4">
+                <div class="alert alert-info" role="alert">
+                    <strong><i class="bi bi-info-circle"></i> Saaty Scale (1-9):</strong>
+                    <ul class="mb-0 mt-2 small">
+                        <li><strong>1</strong> = Both hazards equally important</li>
+                        <li><strong>3</strong> = Left hazard moderately more important</li>
+                        <li><strong>5</strong> = Left hazard strongly more important</li>
+                        <li><strong>7</strong> = Left hazard very strongly more important</li>
+                        <li><strong>9</strong> = Left hazard extremely more important</li>
+                        <li><strong>2,4,6,8</strong> = Intermediate values</li>
+                    </ul>
+                </div>
+
+                <form method="POST" class="needs-validation">
+                    <!-- Comparison Grid -->
+                    <div class="table-responsive mt-4">
+                        <table class="table table-bordered table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="text-center" colspan="2" style="background-color: #f0f0f0;">Pairwise Comparisons (Upper Triangle)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for i in range(9) %}
+                                    {% for j in range(i + 1, 9) %}
+                                    <tr>
+                                        <td style="width: 40%;">
+                                            <div class="d-flex align-items-center justify-content-between">
+                                                <strong style="color: #0066cc;">{{ short_names[i] }}</strong>
+                                                <span class="text-muted small">vs</span>
+                                                <strong style="color: #00a8e8;">{{ short_names[j] }}</strong>
+                                            </div>
+                                            <small class="text-muted d-block mt-1">
+                                                {{ hazards[i] }} vs {{ hazards[j] }}
+                                            </small>
+                                        </td>
+                                        <td style="width: 60%;">
+                                            <div class="input-group">
+                                                <input
+                                                    type="number"
+                                                    step="0.01"
+                                                    min="0.11"
+                                                    max="9"
+                                                    name="h{{ i }}_h{{ j }}"
+                                                    class="form-control form-control-sm"
+                                                    placeholder="Enter 0.11 - 9 (decimals allowed)"
+                                                    value="1.0"
+                                                    required>
+                                                <span class="input-group-text input-group-text-sm">
+                                                    <small class="value-display" data-value="1">1 = Equal</small>
+                                                </span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary btn-lg w-100">
+                                <i class="bi bi-calculator"></i> Calculate AHP Weights (Total: 36 Comparisons)
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+                <!-- Information Section -->
+                <div class="alert alert-light mt-4 p-3 border" role="alert">
+                    <strong>📋 Tips for Accurate Comparisons:</strong>
+                    <ul class="mb-0 mt-2 small">
+                        <li><strong>Consistency matters:</strong> If A is 3x more important than B, and B is 5x more important than C, then A should be about 15x more important than C.</li>
+                        <li><strong>Default value is 1:</strong> If two hazards are equally important, leave the value at 1.</li>
+                        <li><strong>Reciprocal handling:</strong> The system automatically calculates reverse comparisons.</li>
+                        <li><strong>Consistency check:</strong> You'll see a Consistency Ratio (CR) in results. CR &lt; 0.1 is good.</li>
+                    </ul>
+                </div>
+
+                <!-- Hazard Categories Reference -->
+                <div class="alert alert-secondary mt-4 p-3" role="alert">
+                    <strong>🏗️ The 9 Hazard Categories:</strong>
+                    <div class="row mt-3 small">
+                        <div class="col-md-6">
+                            <p class="mb-2"><strong>A - Physical Hazards:</strong> Falls, impacts, crushing</p>
+                            <p class="mb-2"><strong>B - Electrical Hazards:</strong> Electric shock, arc flash</p>
+                            <p class="mb-2"><strong>C - Machinery Hazards:</strong> Amputation, entanglement</p>
+                            <p class="mb-2"><strong>D - Chemical Hazards:</strong> Toxic exposure, burns</p>
+                            <p class="mb-2"><strong>E - Environmental Hazards:</strong> Heat stress, cold exposure</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="mb-2"><strong>F - Fire & Explosion:</strong> Burns, structural damage</p>
+                            <p class="mb-2"><strong>G - Ergonomic Hazards:</strong> Back injury, strain</p>
+                            <p class="mb-2"><strong>H - Biological Hazards:</strong> Infections, disease</p>
+                            <p class="mb-0"><strong>I - Organizational Hazards:</strong> Poor communication, fatigue</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Update value display as user types
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('input[name^="h"]').forEach(input => {
+        const display = input.parentElement.querySelector('.value-display');
+        const update = () => {
+            const value = parseFloat(input.value) || 1.0;
+            let label = '';
+            if (Math.abs(value - 1) < 1e-6) label = '= Equal';
+            else if (value <= 2) label = '≈ Slight';
+            else if (value <= 4) label = 'Moderate';
+            else if (value <= 6) label = 'Strong';
+            else if (value <= 8) label = 'V. Strong';
+            else label = 'Extreme';
+            display.textContent = value.toFixed(1) + ' (' + label + ')';
+        };
+        input.addEventListener('input', update);
+        update();
+    });
+});
+</script>
+{% endblock %}

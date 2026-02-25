@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}Equipment Budget Allocation{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h3>Equipment Budget Allocation</h3>
+
+    {% if not allocation %}
+    <form method="post" class="row g-3 mt-3">
+        <div class="col-md-6">
+            <label class="form-label">Total Equipment Safety Budget (₹)</label>
+            <input type="number" name="budget" min="0" step="0.01" class="form-control" required>
+        </div>
+        <div class="col-12 mt-3">
+            <button class="btn btn-primary">Allocate</button>
+            <a href="/" class="btn btn-secondary ms-2">Cancel</a>
+        </div>
+    </form>
+    {% else %}
+
+    <div class="row">
+        <div class="col-md-6">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Equipment</th>
+                        <th class="text-end">Weight</th>
+                        <th class="text-end">%</th>
+                        <th class="text-end">Allocated Amount (₹)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for pair in equipment|zip(weights) %}
+                    <tr>
+                        <td>{{ pair[0] }}</td>
+                        <td class="text-end">{{ '%.4f'|format(pair[1]) }}</td>
+                        <td class="text-end">{{ '%.0f'|format(pair[1] * 100) }}%</td>
+                        <td class="text-end">₹ {{ "{:,.2f}".format(allocation[loop.index0]) }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <div class="mt-3">
+                <strong>Total Budget:</strong> ₹ {{ "{:,.2f}".format(total_budget) }}
+            </div>
+
+            <div class="mt-3">
+                <a href="/equipment-ahp" class="btn btn-secondary">Back to AHP</a>
+                <a href="/" class="btn btn-outline-primary ms-2">Home</a>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div id="budgetChart" style="height: 370px; width: 100%;"></div>
+        </div>
+    </div>
+
+    <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+    <script>
+        window.onload = function () {
+            const labels = {{ equipment|tojson }};
+            const amounts = {{ allocation|tojson }};
+            const dataPoints = [];
+            for (let i = 0; i < labels.length; i++) {
+                dataPoints.push({ y: amounts[i], label: labels[i] });
+            }
+
+            const chart = new CanvasJS.Chart("budgetChart", {
+                animationEnabled: true,
+                theme: "light2",
+                title: { text: "Allocated Amounts (₹)" },
+                axisY: {
+                    labelFormatter: function (e) { return "₹" + e.value.toLocaleString(); }
+                },
+                data: [{ type: "column", dataPoints: dataPoints }]
+            });
+            chart.render();
+        }
+    </script>
+
+    {% endif %}
+</div>
+
+{% endblock %}

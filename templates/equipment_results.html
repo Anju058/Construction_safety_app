@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}Equipment AHP Results{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h3>Equipment AHP Results</h3>
+
+    <div class="row">
+        <div class="col-md-6">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Equipment</th>
+                        <th class="text-end">Weight</th>
+                        <th class="text-end">%</th>
+                        <th class="text-end">Allocated (₹)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for name, w in equipment|zip(weights) %}
+                    <tr>
+                        <td>{{ name }}</td>
+                        <td class="text-end">{{ '%.4f'|format(w) }}</td>
+                        <td class="text-end">{{ '%.0f'|format(w * 100) }}%</td>
+                        <td class="text-end">{% if total_budget %}₹ {{ "{:,.2f}".format(w * total_budget) }}{% else %}-{% endif %}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <div class="mt-3">
+                <small class="text-muted">Lambda Max: {{ lambda_max }}</small><br>
+                <small class="text-muted">CI: {{ CI }}</small><br>
+                <small class="text-muted">CR: <span class="fw-bold {% if CR < 0.1 %}text-success{% else %}text-danger{% endif %}">{{ CR }}</span></small>
+            </div>
+
+            <div class="mt-3">
+                <a href="/equipment-cos" class="btn btn-success">Allocate Budget</a>
+                <a href="/equipment-ahp" class="btn btn-secondary ms-2">Edit Comparisons</a>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div id="chartContainer" style="height: 370px; width: 100%;"></div>
+        </div>
+    </div>
+</div>
+
+<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+<script>
+    window.onload = function () {
+        const dataPoints = [];
+        const labels = {{ equipment|tojson }};
+        const weights = {{ weights|tojson }};
+
+        for (let i = 0; i < labels.length; i++) {
+            dataPoints.push({ y: Math.round(weights[i] * 10000) / 100, label: labels[i] });
+        }
+
+        const chart = new CanvasJS.Chart("chartContainer", {
+            animationEnabled: true,
+            theme: "light2",
+            title: { text: "Equipment Weights (%)" },
+            data: [{
+                type: "column",
+                dataPoints: dataPoints
+            }]
+        });
+        chart.render();
+    }
+</script>
+
+{% endblock %}
